@@ -11,8 +11,4 @@
     <ProjectReference Include="..\ECommerceWeb.Entities\ECommerceWeb.Entities.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Implementaciones\" />
-  </ItemGroup>
-
 </Project>

@@ -1,0 +1,30 @@
+﻿@page "/categorias/editar/{Id:int}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<CategoriaEditPage Categoria="Registro" OnGrabar="Actualizar" />
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    public CategoriaDto Registro { get; set; } = new ();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var response = await Http.GetFromJsonAsync<CategoriaDto>($"api/categorias/{Id}");
+        if (response is not null)
+        {
+            Registro = response;
+        }
+    }
+
+    private async Task Actualizar()
+    {
+        await Http.PutAsJsonAsync($"api/categorias/{Id}", Registro);
+
+        NavigationManager.NavigateTo("/categorias/list");
+    }
+
+}

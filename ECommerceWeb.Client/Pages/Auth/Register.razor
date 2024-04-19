@@ -1,0 +1,96 @@
+﻿@page "/register"
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
+
+<div class="container">
+    <dvi class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg mt-5">
+                <div class="card-header">
+                    <h3>Crear cuenta</h3>
+                </div>
+                <div class="card-body">
+                    <EditForm Model="Request" OnValidSubmit="ValidRegister">
+                        <DataAnnotationsValidator />
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="nombre" @bind-value="Request.NombreCompleto" autocomplete="off">
+                            <label for="nombre">Nombre Completo</label>
+                            <ValidationMessage For="() => Request.NombreCompleto"></ValidationMessage>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="fechaNacimiento" @bind-value="Request.FechaNacimiento" autocomplete="off">
+                            <label for="fechaNacimiento">Fecha Nacimiento</label>
+                            <ValidationMessage For="() => Request.FechaNacimiento"></ValidationMessage>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="direccion" @bind-value="Request.Direccion" autocomplete="off">
+                            <label for="direccion">Direccion</label>
+                            <ValidationMessage For="() => Request.Direccion"></ValidationMessage>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="usuario" @bind-value="Request.NombreUsuario" autocomplete="off">
+                            <label for="usuario">Usuario</label>
+                            <ValidationMessage For="() => Request.NombreUsuario"></ValidationMessage>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="email" @bind-value="Request.Email" autocomplete="off">
+                            <label for="email">Email</label>
+                            <ValidationMessage For="() => Request.Email"></ValidationMessage>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="password" @bind-value="Request.Password" autocomplete="off">
+                            <label for="password">Clave</label>
+                            <ValidationMessage For="() => Request.Password"></ValidationMessage>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="confirmPassword" @bind-value="Request.ConfirmPassword" autocomplete="off">
+                            <label for="confirmPassword">Confirmar Clave</label>
+                            <ValidationMessage For="() => Request.ConfirmPassword"></ValidationMessage>
+                        </div>
+                        <div class="d-grid gap-1 mt-3">
+                            <button class="btn btn-primary" type="submit">Crear cuenta</button>
+                        </div>
+                    </EditForm>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <div class="small">
+                        <NavLink class="nav-link" href="login">¿Ya tienes una cuenta? Inicia sesion</NavLink>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dvi>
+</div>
+
+@code {
+
+    public RegistrarUsuarioDto Request { get; set; } = new();
+
+    private async Task ValidRegister()
+    {
+        try
+        {
+            var response = await HttpClient.PostAsJsonAsync("api/Usuarios/Register", Request);
+
+            response.EnsureSuccessStatusCode();
+
+            var registerResponse = await response.Content.ReadFromJsonAsync<BaseResponse>();
+
+            if (registerResponse!.Exito == false)
+            {
+                ToastService.ShowWarning(registerResponse.MensajeError!);
+            }
+            else
+            {
+                ToastService.ShowSuccess("Usuario registrado con exito");
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError(ex.Message);
+        }
+    }
+
+}

@@ -1,0 +1,40 @@
+﻿@page "/productos/crear"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = Constantes.RolAdministrador)]
+
+@if (Categorias != null && Marcas != null)
+{
+    <ProductoEditPage OnGrabar="Crear"
+                      Titulo="Crear nuevo Producto"
+                      Request="ProductoNuevo"
+                      Categorias="Categorias"
+                      Marcas="Marcas" />
+}
+else
+{
+    <p>Cargando...</p>
+}
+
+
+@code {
+
+    public ProductoDtoRequest ProductoNuevo { get; set; } = new();
+
+    public ICollection<MarcaDto>? Marcas { get; set; }
+
+    public ICollection<CategoriaDto>? Categorias { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Marcas = await Http.GetFromJsonAsync<ICollection<MarcaDto>>("api/Marcas");
+        Categorias = await Http.GetFromJsonAsync<ICollection<CategoriaDto>>("api/Categorias");
+    }
+
+    private async Task Crear()
+    {
+        await Http.PostAsJsonAsync("api/Productos", ProductoNuevo);
+        NavigationManager.NavigateTo("productos/list");
+    }
+
+}

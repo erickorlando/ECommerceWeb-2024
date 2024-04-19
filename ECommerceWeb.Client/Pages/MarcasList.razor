@@ -1,0 +1,48 @@
+﻿@page "/marcas/list"
+@using ECommerceWeb.Shared
+@using Microsoft.AspNetCore.Authorization
+@inject HttpClient Http
+@attribute [Authorize(Roles = Constantes.RolAdministrador)]
+
+<h1>Marcas</h1>
+
+@if (Marcas is null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr class="table-primary">
+                <th>Id</th>
+                <th>Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Marcas)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Nombre</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    public ICollection<MarcaDto>? Marcas { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Cargar();
+    }
+
+    private async Task Cargar()
+    {
+        Marcas = await Http.GetFromJsonAsync<MarcaDto[]>("api/Marcas");
+    }
+
+}

@@ -1,0 +1,128 @@
+﻿@inject IToastService ToastService
+
+<h3>@Titulo</h3>
+
+<EditForm Model="Request" OnValidSubmit="Grabar">
+    <DataAnnotationsValidator />
+    <div class="row row-cols-md-3">
+        <div class="col">
+            <div class="mb-3 row">
+                <label class="form-label" for="nombre">Nombre:</label>
+                <input type="text" id="nombre" class="form-control" @bind-value="Request.Nombre" />
+                <ValidationMessage For="() => Request.Nombre" />
+            </div>
+            <div class="mb-3 row">
+                <label class="form-label" for="descripcion">Descripción:</label>
+                <input type="text" id="descripcion" class="form-control" @bind-value="Request.Descripcion" />
+                <ValidationMessage For="() => Request.Descripcion" />
+            </div>
+            <div class="mb-3 row">
+                <label class="form-label" for="preciounitario">Precio Unitario:</label>
+                <InputNumber id="preciounitario" class="form-control" @bind-Value="Request.PrecioUnitario" />
+                <ValidationMessage For="() => Request.PrecioUnitario" />
+            </div>
+            <div class="mb-3 row">
+                <label class="form-label" for="categoria">Categoría:</label>
+                <InputSelect id="categoria" @bind-Value="Request.CategoriaId" class="form-select">
+                    <option value="0">Seleccione una categoría</option>
+                    @foreach (var item in Categorias)
+                    {
+                        <option value="@item.Id">@item.Nombre</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="mb-3 row">
+                <label class="form-label" for="marca">Marca:</label>
+                <InputSelect id="marca" @bind-Value="Request.MarcaId" class="form-select">
+                    <option value="0">Seleccione una Marca</option>
+                    @foreach (var item in Marcas)
+                    {
+                        <option value="@item.Id">@item.Nombre</option>
+                    }
+                </InputSelect>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    @if (Request.Base64Imagen is not null)
+                    {
+                        <div style="margin: 10px">
+                            <img src="data:image/jpeg;base64, @Request.Base64Imagen" alt="@Request.Nombre" style="width:400px" />
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="@Request.UrlImagen" alt="@Request.Nombre" style="width: 400px" />
+                    }
+                </div>
+                <div class="card-footer">
+                    <InputFile accept="image/png, image/jpeg, image/webp" style="display: none"
+                               OnChange="OnFileUploaded" id="file" />
+                    <label for="file" class="btn btn-secondary"><i class="bi bi-camera me-1"></i>IMAGEN</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row row-cols-md-4">
+        <div class="col">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-floppy me-1"></i>@TextoBoton</button>
+        </div>
+        <div class="col">
+            <button type="reset" class="btn btn-danger"><i class="bi bi-x-circle me-1"></i>Limpiar</button>
+        </div>
+    </div>
+
+
+    <ValidationSummary />
+
+</EditForm>
+
+
+@code {
+
+    [Parameter]
+    public ProductoDtoRequest Request { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnGrabar { get; set; }
+
+    [Parameter]
+    public string Titulo { get; set; } = string.Empty;
+
+    [Parameter]
+    public ICollection<CategoriaDto> Categorias { get; set; } = new List<CategoriaDto>();
+
+    [Parameter]
+    public ICollection<MarcaDto> Marcas { get; set; } = new List<MarcaDto>();
+
+    public string TextoBoton { get; set; } = "Crear";
+
+    private void Grabar()
+    {
+        OnGrabar.InvokeAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        TextoBoton = Request.Id == 0 ? "Crear" : "Actualizar";
+    }
+
+    private async Task OnFileUploaded(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            var imagen = e.File;
+            var buffer = new byte[imagen.Size];
+            var _ = await imagen.OpenReadStream().ReadAsync(buffer); // Extrae el base64
+
+            Request.Base64Imagen = Convert.ToBase64String(buffer);
+            Request.NombreArchivo = imagen.Name;
+            Request.UrlImagen = null;
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError(ex.Message);
+        }
+    }
+}

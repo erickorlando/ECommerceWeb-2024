@@ -1,0 +1,71 @@
+﻿@page "/categorias/list"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<PageTitle>Categorias</PageTitle>
+
+<h1>Categorias</h1>
+
+<a class="btn btn-primary" href="categorias/crear">Nuevo</a>
+
+<hr/>
+
+
+
+@if (_categorias == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr class="table-primary">
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Comentarios</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in _categorias)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Nombre</td>
+                <td>@item.Comentarios</td>
+                <td>
+                    <button class="btn btn-secondary" @onclick="() => Editar(item.Id)"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-danger" @onclick="() => Eliminar(item.Id)"><i class="bi bi-trash3"></i></button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private CategoriaDto[]? _categorias;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Cargar();
+    }
+
+    private async Task Cargar()
+    {
+        _categorias = await Http.GetFromJsonAsync<CategoriaDto[]>("api/categorias");
+    }
+
+    private void Editar(int id)
+    {
+        NavigationManager.NavigateTo($"categorias/editar/{id}");
+    }
+
+    private async Task Eliminar(int id)
+    {
+        await Http.DeleteAsync($"api/Categorias/{id}");
+        await Cargar();
+    }
+}

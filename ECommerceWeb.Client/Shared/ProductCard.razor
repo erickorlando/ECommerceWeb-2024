@@ -1,0 +1,38 @@
+﻿<div class="col mb-5">
+    <div class="card h-100 shadow-lg">
+        <div class="text-center">
+            @if (string.IsNullOrWhiteSpace(Producto.UrlImagen))
+            {
+                <img src="assets/images/sinimagen.jpeg" class="card-img-top border-dark" alt="No hay imagen" style="height: 200px; width: 200px;" />
+            }
+            else
+            {
+                <img src="@Producto.UrlImagen" class="card-img-top border-dark" alt="@Producto.Nombre" style="height: 200px; width: 200px;" />
+            }
+        </div>
+        <div class="card-body p-4 text-center">
+            <h5 class="fw-bolder">@Producto.Nombre</h5>
+            <span>$ @Producto.PrecioUnitario.ToString("N2")</span>
+        </div>
+        <div class="card-footer">
+            <div class="text-center">
+                <a class="btn btn-outline-primary mt-auto"
+                   @onclick="() => OnClick.InvokeAsync(Producto.Id)">
+                    <i class="bi bi-eye me-1"></i>Ver Producto
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+
+    [Parameter]
+    [EditorRequired]
+    public ProductoDtoResponse Producto { get; set; } = null!;
+
+    [Parameter]
+    public EventCallback<int> OnClick { get; set; }
+
+}

@@ -1,0 +1,35 @@
+﻿<h3>Categoria</h3>
+
+<EditForm Model="Categoria" OnSubmit="Grabar">
+
+    <div class="row row-cols-1 row-cols-md-2">
+        <div class="col">
+            <div class="mb-3 row">
+                <label class="form-label" for="nombre">Nombre:</label>
+                <input type="text" id="nombre" class="form-control" @bind-value="Categoria.Nombre" />
+            </div>
+            <div class="mb-3 row">
+                <label class="form-label" for="comentarios">Comentarios:</label>
+                <input type="text" id="comentarios" class="form-control" @bind-value="Categoria.Comentarios" />
+            </div>
+        </div>
+    </div>
+    <div class="row row-cols-1">
+        <button type="submit" class="btn btn-primary w-25">Grabar</button>
+    </div>
+
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public CategoriaDto Categoria { get; set; } = new CategoriaDto();
+
+    [Parameter]
+    public EventCallback OnGrabar { get; set; }
+
+    private void Grabar()
+    {
+        OnGrabar.InvokeAsync();
+    }
+}

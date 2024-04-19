@@ -1,0 +1,19 @@
+﻿@page "/categorias/crear"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h3>Categoria</h3>
+
+<CategoriaEditPage Categoria="Categoria" OnGrabar="Grabar" />
+
+@code {
+
+    public CategoriaDto Categoria { get; set; } = new CategoriaDto();
+
+    private async Task Grabar()
+    {
+        await Http.PostAsJsonAsync("api/categorias", Categoria);
+        NavigationManager.NavigateTo("/categorias/list");
+    }
+
+}

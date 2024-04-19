@@ -1,0 +1,90 @@
+﻿@page "/productos/list"
+
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h1>Productos</h1>
+<a class="btn btn-primary" href="productos/crear"><i class="bi bi-plus-circle-dotted me-1"></i>Nuevo</a>
+
+<div class="row mb-5 mt-4 justify-content-start align-items-baseline">
+    <div class="col-1">
+        <label class="form-label" for="filtro">Nombre:</label>
+    </div>
+    <div class="col-8">
+        <div class="input-group">
+            <input type="search" class="form-control" @bind-value="Filtro" id="filtro" />
+            <button type="button" class="btn btn-secondary" @onclick="Cargar"><i class="bi bi-search"></i></button>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+@if (Productos is null)
+{
+    <p>Cargando...</p>
+}
+else
+{
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr class="table-primary">
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Precio Unitario</th>
+                <th>Marca</th>
+                <th>Categoria</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Productos)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Nombre</td>
+                    <td>@item.Descripcion</td>
+                    <td>@item.PrecioUnitario</td>
+                    <td>@item.Marca</td>
+                    <td>@item.Categoria</td>
+                    <td>
+                        <button class="btn btn-secondary" @onclick="() => Editar(item.Id)"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-danger" @onclick="() => Eliminar(item.Id)"><i class="bi bi-trash3"></i></button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+}
+
+@code {
+
+    public ICollection<ProductoDtoResponse>? Productos { get; set; }
+
+    private string Filtro { get; set; } = default!;
+
+    private async Task Cargar()
+    {
+        Productos = await Http.GetFromJsonAsync<ICollection<ProductoDtoResponse>>($"api/Productos?filtro={Filtro}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Cargar();
+    }
+
+    private void Editar(int id)
+    {
+        NavigationManager.NavigateTo($"productos/edit/{id}");
+    }
+
+    private async Task Eliminar(int id)
+    {
+        await Http.DeleteAsync($"api/Productos/{id}");
+        await Cargar();
+    }
+
+}
