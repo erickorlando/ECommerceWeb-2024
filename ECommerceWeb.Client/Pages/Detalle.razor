@@ -1,7 +1,7 @@
 ﻿@page "/detalle/{Id:int}"
 @inject HttpClient HttpClient
 @inject IToastService ToastService
-@* @inject ICarritoProxy CarritoProxy *@
+@inject ICarritoProxy CarritoProxy
 
 <div class="container px-4 px-lg-5">
     @if (Producto is not null)
@@ -70,14 +70,14 @@
 
     private async Task AgregarCarrito(ProductoDtoResponse producto)
     {
-        // var carrito = new CarritoDto
-        //     {
-        //         ProductoDto = producto,
-        //         Cantidad = Cantidad,
-        //         Precio = producto.PrecioUnitario,
-        //         Total = Cantidad * producto.PrecioUnitario
-        //     };
+        var carrito = new CarritoDto
+            {
+                ProductoDto = producto,
+                Cantidad = Cantidad,
+                Precio = producto.PrecioUnitario,
+                Total = Cantidad * producto.PrecioUnitario
+            };
 
-        // await CarritoProxy.AgregarCarrito(carrito);
+        await CarritoProxy.AgregarCarrito(carrito);
     }
 }

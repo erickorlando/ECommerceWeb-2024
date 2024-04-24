@@ -4,6 +4,7 @@ using Blazored.Toast;
 using CurrieTechnologies.Razor.SweetAlert2;
 using ECommerceWeb.Client;
 using ECommerceWeb.Client.Auth;
+using ECommerceWeb.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -21,6 +22,7 @@ builder.Services.AddSweetAlert2();
 
 // Habilitamos el contexto de seguridad de Blazor
 builder.Services.AddScoped<AuthenticationStateProvider, AuthenticacionService>();
+builder.Services.AddScoped<ICarritoProxy, CarritoProxy>();
 builder.Services.AddAuthorizationCore();
 
 await builder.Build().RunAsync();

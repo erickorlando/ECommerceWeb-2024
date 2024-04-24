@@ -1,6 +1,10 @@
-﻿@inject NavigationManager NavigationManager
+﻿@using ECommerceWeb.Client.Pages
+@using ECommerceWeb.Client.Services
+@inject NavigationManager NavigationManager
 @inject SweetAlertService Swal
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ICarritoProxy CarritoProxy
+@implements IDisposable
 
 <header>
     <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
@@ -27,12 +31,19 @@
                     <li class="nav-item">
                         <NavLink class="nav-link text-white" href="productos/list">Productos</NavLink>
                     </li>
+                    <AuthorizeView Roles="@Constantes.RolAdministrador">
+                        <Authorized>
+                            <li class="nav-item">
+                                <NavLink class="nav-link text-white" href="dashboard">Dashboard</NavLink>
+                            </li>
+                        </Authorized>
+                    </AuthorizeView>
                 </ul>
             </div>
             <a class="btn btn-outline-info ms-auto me-3" href="carrito">
                 <i class="bi bi-cart me-1"></i>
                 Carrito
-                <span class="badge bg-info text-white rounded-pill">5</span>
+                <span class="badge bg-info text-white rounded-pill">@MostrarCantidadCarrito()</span>
             </a>
             <div>
                 <AuthorizeView>
@@ -73,4 +84,20 @@
             NavigationManager.NavigateTo("/", forceLoad: true);
         }
     }
+
+    public void Dispose()
+    {
+        CarritoProxy.ActualizarVista += StateHasChanged;
+    }
+
+    protected override void OnInitialized()
+    {
+        CarritoProxy.ActualizarVista += StateHasChanged;
+    }
+
+    private int MostrarCantidadCarrito()
+    {
+        return CarritoProxy.CantidadProductos();
+    }
+
 }

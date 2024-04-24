@@ -1,0 +1,93 @@
+﻿@page "/dashboard"
+@inject HttpClient HttpClient
+
+<div class="row mt-4 justify-content-center">
+    <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+        <div class="card border-5 shadow border-primary p-4">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="text-xl fw-bolder text-primary text-uppercase mb-1">
+                        Total Ventas
+                    </div>
+                    <div class="h5 mb-0 fw-bold text-muted">
+                        $ @DashboardDto.TotalVenta
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <i class="bi bi-coin text-secondary" style="font-size:50px"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+        <div class="card border-5 shadow border-success p-4">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="text-xs fw-bolder text-success text-uppercase mb-1">
+                        Cantidad Ventas
+                    </div>
+                    <div class="h5 mb-0 fw-bold text-muted">
+                        $ @DashboardDto.CantidadVentas
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <i class="bi-piggy-bank-fill text-secondary" style="font-size:50px"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center mt-2">
+    <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+        <div class="card border-5 shadow border-warning p-4">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="text-xs fw-bolder text-warning text-uppercase mb-1">
+                        Cantidad Clientes
+                    </div>
+                    <div class="h5 mb-0 fw-bold text-muted">
+                        $ @DashboardDto.CantidadClientes
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <i class="bi bi-people text-secondary" style="font-size:50px"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+        <div class="card border-5 shadow border-info p-4">
+            <div class="row align-items-center">
+                <div class="col">
+                    <div class="text-xs fw-bolder text-info text-uppercase mb-1">
+                        Cantidad Productos
+                    </div>
+                    <div class="h5 mb-0 fw-bold text-muted">
+                        $ @DashboardDto.CantidadProductos
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <i class="bi bi-box-seam text-secondary" style="font-size:50px"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    public DashboardDto DashboardDto { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await HttpClient.GetFromJsonAsync<DashboardDto>("api/Ventas/dashboard");
+
+        if (response is { })
+        {
+            DashboardDto = response;
+        }
+    }
+
+}
