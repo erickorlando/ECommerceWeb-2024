@@ -72,7 +72,11 @@ builder.Services.AddTransient<IProductoRepository, ProductoRepository>();
 builder.Services.AddTransient<IVentaRepository, VentaRepository>();
 
 builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IFileUploader, FileUploader>();
+
+if (builder.Environment.IsDevelopment())
+    builder.Services.AddTransient<IFileUploader, FileUploader>();
+else
+    builder.Services.AddTransient<IFileUploader, AzureFileUploader>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
